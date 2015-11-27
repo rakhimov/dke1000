@@ -69,5 +69,64 @@ def chess_e1000():
     """
     return {"white": chess_960("white"), "black": chess_960("black")}
 
+def initial_position_to_text(init_setup):
+    """Prints initial setup positions into a text.
+
+    Args:
+        init_setup: A map of white and black non-pawn piece positions.
+
+    Returns:
+        A text representation of the position with pawns.
+    """
+    # NOTE: Unicode colors seem to be reversed in Python for chess pieces.
+    whites = {
+            "bishop_dark": u"\u2657",
+            "bishop_white": u"\u2657",
+            "knight_one": u"\u2658",
+            "knight_two": u"\u2658",
+            "queen": u"\u2655",
+            "rook_one": u"\u2656",
+            "rook_two": u"\u2656",
+            "king": u"\u2654",
+            }
+    white_pawn = u"\u2659"
+
+    blacks = {
+            "bishop_dark": u"\u265D",
+            "bishop_white": u"\u265D",
+            "knight_one": u"\u265E",
+            "knight_two": u"\u265E",
+            "queen": u"\u265B",
+            "rook_one": u"\u265C",
+            "rook_two": u"\u265C",
+            "king": u"\u265A",
+            }
+    black_pawn = u"\u265F"
+
+    def order_setup(piece_positions):
+        """Handles piece position transformations to a list.
+
+        Returns:
+            An ordered list of pieces.
+        """
+        order = ["a", "b", "c", "d", "e", "f", "g", "h"]
+        ret = []
+        for i in order:
+            for k, v in piece_positions.items():
+                if v == i:
+                    ret.append(k)
+                    break
+        return ret
+
+    text = ["8 " + \
+            " ".join([whites[x] for x in order_setup(init_setup["black"])])]+ \
+           ["7" + 8 * u" \u2659"] + \
+           [str(i) + " . . . . . . . ." for i in reversed(range(3, 7))] + \
+           ["2" + 8 * u" \u265F"] + \
+           ["1 " + \
+            " ".join([blacks[x] for x in order_setup(init_setup["white"])])]+ \
+           ["  a b c d e f g h", ]
+    return "\n".join(text)
+
 if __name__ == "__main__":
-    pprint(chess_e1000())
+    print(initial_position_to_text(chess_e1000()))
